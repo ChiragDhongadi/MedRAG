@@ -1,52 +1,63 @@
 # 🏥 MedRAG
 
-### Medical Document Vectorization Pipeline for Retrieval-Augmented Generation
+### Medical Retrieval-Augmented Generation System for Intelligent Revision Notes
 
-MedRAG is a medical document indexing system that converts PDF-based study materials into a high-performance semantic vector database using FAISS.
+MedRAG is an end-to-end Retrieval-Augmented Generation (RAG) system designed to transform medical study materials into structured, high-quality revision sheets.
 
-The project forms the knowledge foundation for Retrieval-Augmented Generation (RAG) systems by enabling fast, accurate semantic search over medical documents.
-
----
-
-## 📌 Overview
-
-This repository focuses on:
-
-* Loading medical PDFs from a directory
-* Splitting documents into optimized text chunks
-* Generating dense vector embeddings
-* Building and persisting a FAISS vector store locally
-
-The resulting vector database can be integrated into AI-powered medical summarization, question-answering, or clinical decision-support systems.
+The system extracts content from PDFs and medical images (via OCR), retrieves relevant domain knowledge using semantic search over a FAISS vector database, and generates personalized revision notes using a Large Language Model.
 
 ---
 
-## 🏗 Architecture
+## 🚀 Key Features
+
+* 📄 Multi-document PDF ingestion
+* 🖼 OCR-based image text extraction (Tesseract)
+* 🔍 Semantic search using FAISS
+* 🧠 Retrieval-Augmented Generation (RAG)
+* 📝 Personalized learning styles:
+
+  * Bullet points
+  * Short notes
+  * Detailed notes
+  * Example-based explanations
+* ⚡ Hallucination-reduction via grounded context
+* 🏗 Modular and extensible architecture
+
+---
+
+## 🏗 System Architecture
 
 ```
-Medical PDFs (data/)
+User Upload (PDF / Image)
         ↓
-DirectoryLoader + PyPDFLoader
+Text Extraction
+  - PyPDFLoader
+  - Tesseract OCR
         ↓
-RecursiveCharacterTextSplitter
+Text Aggregation
         ↓
-HuggingFace Embeddings (MiniLM)
+Semantic Retrieval (FAISS)
         ↓
-FAISS Vector Store
+Context Construction
         ↓
-Local Persistence (vectorstore/db_faiss)
+Prompt Engineering
+        ↓
+LLM Generation (MedGemma via Ollama)
+        ↓
+Structured One-Page Revision Sheet
 ```
 
 ---
 
-## 🧠 Technology Stack
+## 🧠 Tech Stack
 
 * Python
 * LangChain
 * FAISS
-* Hugging Face Sentence Transformers
-* PyPDF
-* all-MiniLM-L6-v2 Embedding Model
+* Hugging Face Embeddings (all-MiniLM-L6-v2)
+* Ollama (MedGemma 4B)
+* Tesseract OCR
+* PIL (Image Processing)
 
 ---
 
@@ -55,10 +66,10 @@ Local Persistence (vectorstore/db_faiss)
 ```
 MedRAG/
 │
-├── data/                     # Input medical PDF documents
+├── uploaded_files/          # User-uploaded PDFs & images
 ├── vectorstore/
-│   └── db_faiss/             # Generated FAISS index
-├── main.py                   # Vector store creation script
+│   └── db_faiss/            # Pre-built FAISS index
+├── main.py                  # RAG pipeline script
 └── README.md
 ```
 
@@ -66,74 +77,122 @@ MedRAG/
 
 ## ⚙️ Installation
 
-Clone the repository:
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/yourusername/MedRAG.git
 cd MedRAG
 ```
 
-Install dependencies:
+### 2️⃣ Install Dependencies
 
 ```bash
 pip install langchain langchain-community langchain-huggingface \
-faiss-cpu sentence-transformers pypdf
+faiss-cpu sentence-transformers pypdf pillow pytesseract ollama
+```
+
+### 3️⃣ Install Tesseract OCR
+
+* Windows: Install from official Tesseract installer
+* Linux:
+
+```bash
+sudo apt install tesseract-ocr
+```
+
+### 4️⃣ Install Ollama and Pull Model
+
+```bash
+ollama pull MedAIBase/MedGemma1.5:4b
 ```
 
 ---
 
 ## ▶️ Usage
 
-1. Place your medical PDF files inside the `data/` directory.
-2. Run the script:
-
-```bash
-python main.py
-```
-
-3. The FAISS vector database will be saved to:
+1. Place medical PDFs or images inside the `uploaded_files/` directory.
+2. Ensure your FAISS vector store exists in:
 
 ```
 vectorstore/db_faiss
 ```
 
-This database can then be loaded into any RAG-based application for semantic retrieval.
+3. Run:
+
+```bash
+python main.py
+```
+
+4. Choose your preferred learning style when prompted:
+
+```
+bullets / short notes / detailed notes / examples
+```
+
+The system will generate a structured one-page revision sheet.
 
 ---
 
-## 🔧 Configuration
+## 🔎 How It Works
 
-Current parameters:
+### 1️⃣ Document Processing
 
-* Chunk Size: 500 characters
-* Chunk Overlap: 50 characters
-* Embedding Model: sentence-transformers/all-MiniLM-L6-v2
+* Loads PDFs via `PyPDFLoader`
+* Extracts image text using Tesseract OCR
+* Combines all extracted content
 
-These can be adjusted based on document size and retrieval performance requirements.
+### 2️⃣ Semantic Retrieval
+
+* Loads pre-built FAISS vector store
+* Retrieves top-k relevant medical knowledge
+* Grounds generation in domain-specific context
+
+### 3️⃣ Prompt Engineering
+
+* Enforces strict anti-hallucination rules
+* Merges multiple sources
+* Adapts output format to user learning preference
+
+### 4️⃣ LLM Generation
+
+* Uses MedGemma 4B via Ollama
+* Produces structured revision notes
 
 ---
 
 ## 🎯 Use Cases
 
-* Medical knowledge indexing
-* Semantic search over clinical documents
-* AI-powered revision systems
-* RAG-based medical summarization
-* Academic research assistance
+* Medical exam preparation
+* Clinical concept revision
+* Summarizing large medical PDFs
+* Transforming notes into structured revision sheets
+* AI-powered study assistant
 
 ---
 
-## 🚀 Roadmap
+## 🧪 Design Principles
 
-* Add metadata filtering support
-* Support additional document formats (DOCX, images)
-* Integrate with LLM for complete RAG pipeline
-* Deploy as REST API service
-* Add evaluation metrics
+* Context-grounded generation
+* Controlled hallucination
+* Clean structured outputs
+* Modular RAG architecture
+* Medical-domain adaptation
 
 ---
 
-## 📜 License
+## 🚀 Future Improvements
 
-This project is intended for educational and research purposes.
+* Web UI (Gradio / Streamlit)
+* Hugging Face Inference API support
+* Token optimization
+* Multi-step summarization refinement
+* RAG evaluation (RAGAS)
+* Dockerized deployment
 
+---
+
+## 🏆 Resume Highlight
+
+> Developed MedRAG, a Retrieval-Augmented Generation system that extracts medical content from PDFs and images, performs semantic search using FAISS, and generates personalized revision sheets using a medical LLM with hallucination control mechanisms.
+
+---
