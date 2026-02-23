@@ -1,0 +1,9 @@
+ollama
+langchain
+langchain-huggingface
+langchain-community
+sentence-transformers
+faiss-cpu
+Pillow
+pytesseract
+unstructured
